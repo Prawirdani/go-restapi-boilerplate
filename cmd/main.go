@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/prawirdani/go-restapi-boilerplate/app"
 	"github.com/prawirdani/go-restapi-boilerplate/config"
-	"github.com/prawirdani/go-restapi-boilerplate/internal/index"
+	"github.com/prawirdani/go-restapi-boilerplate/internal/index"	
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/utils"
 )
 

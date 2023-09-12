@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/prawirdani/go-restapi-boilerplate/pkg/jason"
+	"github.com/prawirdani/go-restapi-boilerplate/pkg/json"
 )
 
 type IndexHandler struct{}
@@ -18,5 +18,5 @@ func (h *IndexHandler) Routes(r chi.Router) {
 }
 
 func (h *IndexHandler) hello(w http.ResponseWriter, r *http.Request) {
-	jason.Send(w, http.StatusOK, "Hello World")
+	json.Send(w, http.StatusOK, "Hello World")
 }

@@ -7,18 +7,18 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/prawirdani/go-restapi-boilerplate/pkg/jason"
+	json_util "github.com/prawirdani/go-restapi-boilerplate/pkg/json"
 )
 
 func ExceptionIfErr(w http.ResponseWriter, err error) {
 	switch e := err.(type) {
 	case *HttpExceptionError: // Our Custom Error
-		jason.Send(w, e.Code, e.Message)
+		json_util.Send(w, e.Code, e.Message)
 	case *json.UnmarshalTypeError:
-		jason.Send(w, http.StatusBadRequest, e.Error())
+		json_util.Send(w, http.StatusBadRequest, e.Error())
 	default:
 		/* Add your logger here */
-		jason.Send(w, http.StatusInternalServerError, err.Error())
+		json_util.Send(w, http.StatusInternalServerError, err.Error())
 	}
 }
 

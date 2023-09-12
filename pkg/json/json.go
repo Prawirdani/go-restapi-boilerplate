@@ -1,4 +1,4 @@
-package jason
+package json
 
 import (
 	"encoding/json"
