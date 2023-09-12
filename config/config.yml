@@ -1,0 +1,5 @@
+server:
+  Port: ":8080"
+  ReadTimeout: 15
+  WriteTimeout: 15
+  Env: "development"
