@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/prawirdani/go-restapi-boilerplate/app"
 	"github.com/prawirdani/go-restapi-boilerplate/config"
@@ -18,6 +20,7 @@ func main() {
 	conf, err := config.LoadConfig()
 	utils.PanicIfErr(err)
 
+	log.Println(conf)
 	mainRouter := app.NewMainRouter(conf)
 	mainRouter.Get("/swagger/*", httpSwagger.WrapHandler)
 

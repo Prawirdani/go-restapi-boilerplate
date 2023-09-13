@@ -10,6 +10,7 @@ import (
 
 type Config struct {
 	Server ServerConfig
+	Cors   CorsConfig
 }
 
 type ServerConfig struct {
@@ -19,7 +20,7 @@ type ServerConfig struct {
 	Env          string
 }
 
-type Cors struct {
+type CorsConfig struct {
 	Credentials bool
 }
 

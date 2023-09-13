@@ -3,3 +3,7 @@ server:
   ReadTimeout: 15
   WriteTimeout: 15
   Env: "development"
+
+cors:
+  Credentials: true
+

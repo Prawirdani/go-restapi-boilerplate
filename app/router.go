@@ -19,10 +19,10 @@ func NewMainRouter(c *config.Config) *chi.Mux {
 	r.Use(panicRecover)
 
 	r.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"*"}, // Add Allowed Origins, eg: frontend
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"*"},
-		AllowCredentials: true,
+		AllowCredentials: c.Cors.Credentials,
 	}).Handler)
 
 	r.Use(secure.New(secure.Options{
