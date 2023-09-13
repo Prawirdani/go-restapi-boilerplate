@@ -1,0 +1,28 @@
+basePath: /v1
+definitions:
+  utils.HttpResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is an api Swagger.
+  title: Swagger Docs (API TITLE HERE)
+  version: "1.0"
+paths:
+  /index:
+    get:
+      description: index
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpResponse'
+      summary: Index
+swagger: "2.0"
