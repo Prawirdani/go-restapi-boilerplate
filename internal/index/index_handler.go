@@ -14,9 +14,14 @@ func NewIndexHandler() *IndexHandler {
 }
 
 func (h *IndexHandler) Routes(r chi.Router) {
-	r.Get("/", h.hello)
+	r.Get("/index", h.hello)
 }
 
+//	@Summary		Index
+//	@Description	index
+//	@Produce		json
+//	@Success		200	{object}	utils.HttpResponse
+//	@Router			/index [get]
 func (h *IndexHandler) hello(w http.ResponseWriter, r *http.Request) {
 	json.Send(w, http.StatusOK, "Hello World")
 }
