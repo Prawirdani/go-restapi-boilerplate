@@ -12,11 +12,5 @@ run:
 tidy:
 	go mod tidy
 
-migrate-up:
-	migrate -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_ADDRESS}:${DB_PORT})/${DB_NAME}" -path database/migrations up
-
-migrate-down:
-	migrate -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_ADDRESS}:${DB_PORT})/${DB_NAME}" -path database/migrations down
-
 test-all:
 	go test -v --failfast ./test/...
