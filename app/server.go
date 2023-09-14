@@ -2,7 +2,8 @@ package app
 
 import (
 	"context"
-	"log"
+	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -29,24 +30,24 @@ func NewServer(c *config.Config, handler http.Handler) *Server {
 
 func (s *Server) Start() {
 	go func() {
-		log.Printf("ENVIROMENT: %s", s.Env)
-		log.Printf("Server listening on localhost%s", s.Addr)
+		slog.Info("App started", slog.String("environment", s.Env))
+		slog.Info(fmt.Sprintf("Server listening on localhost%s", s.Addr))
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Server startup error: %v", err)
+			slog.Debug("Server startup failed", slog.Any("cause", err))
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutdown signal received")
+	slog.Info("Shutdown signal received")
 
 	ctx, shutdown := context.WithTimeout(context.Background(), 15*time.Second)
 	defer shutdown()
 
 	if err := s.Shutdown(ctx); err != nil {
-		log.Fatalf("Server shutdown error: %v", err)
+		slog.Warn("Server shutdown failed", slog.Any("cause", err))
+		os.Exit(1)
 	}
-
-	log.Println("Server gracefully stopped")
+	slog.Info("Server gracefully stopped")
 }
