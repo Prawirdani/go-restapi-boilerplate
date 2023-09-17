@@ -15,18 +15,95 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/index": {
+        "/users": {
             "get": {
-                "description": "index",
+                "description": "Returning list of users",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Index",
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List Users",
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httputil.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/user.User"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create New User",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create User",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.HttpResponse"
+                            "$ref": "#/definitions/httputil.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}": {
+            "get": {
+                "description": "Returning an user with given id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Users by Id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User Id",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httputil.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user.User"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -34,7 +111,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "utils.HttpResponse": {
+        "httputil.Response": {
             "type": "object",
             "properties": {
                 "code": {
@@ -42,6 +119,27 @@ const docTemplate = `{
                 },
                 "data": {},
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.User": {
+            "type": "object",
+            "required": [
+                "email",
+                "username"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -55,7 +153,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/v1",
 	Schemes:          []string{},
-	Title:            "Swagger Docs (API TITLE HERE)",
+	Title:            "Swagger Docs (RESTAPI BoilerPlate)",
 	Description:      "This is an api Swagger.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
