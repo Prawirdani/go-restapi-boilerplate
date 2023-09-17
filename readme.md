@@ -7,4 +7,4 @@ additional:
 - Docs: https://github.com/swaggo/http-swagger
 - Secure Middleware: https://github.com/unrolled/secure
 
-Used most of the time for Layered Archi, probably suitable too for DDD.
+Used most of the time for Layered Archi, probably suitable too for DDD. I'm not going to write any documentation, so if you want to use this, go play around and find out! 
