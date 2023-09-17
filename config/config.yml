@@ -1,9 +1,14 @@
 server:
   Port: ":8080"
-  ReadTimeout: 15
-  WriteTimeout: 15
+  ReadTimeout: 5
+  WriteTimeout: 5
   Env: "development"
 
 cors:
   Credentials: true
 
+mysql:
+  DSN: "root:1337@tcp(localhost:3306)/example_db?parseTime=true"
+
+postgres:
+  DSN: "postgres://postgres:1337@localhost:5432/example"

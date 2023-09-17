@@ -2,15 +2,16 @@ package config
 
 import (
 	"errors"
-	"log"
 	"time"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Server ServerConfig
-	Cors   CorsConfig
+	Server   ServerConfig
+	Cors     CorsConfig
+	Mysql    MysqlConfig
+	Postgres PostgreSQLConfig
 }
 
 type ServerConfig struct {
@@ -22,6 +23,13 @@ type ServerConfig struct {
 
 type CorsConfig struct {
 	Credentials bool
+}
+
+type MysqlConfig struct {
+	DSN string
+}
+type PostgreSQLConfig struct {
+	DSN string
 }
 
 func LoadConfig() (*Config, error) {
@@ -39,7 +47,6 @@ func LoadConfig() (*Config, error) {
 	var c Config
 
 	if err := v.Unmarshal(&c); err != nil {
-		log.Panicf("failed decode config into struct, %v", err)
 		return nil, err
 	}
 
