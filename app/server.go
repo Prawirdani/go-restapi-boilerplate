@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -30,8 +29,7 @@ func NewServer(c *config.Config, handler http.Handler) *Server {
 
 func (s *Server) Start() {
 	go func() {
-		slog.Info("App started", slog.String("environment", s.Env))
-		slog.Info(fmt.Sprintf("Server listening on localhost%s", s.Addr))
+		slog.Info("Server started", slog.String("environment", s.Env), slog.String("port", s.Addr))
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			slog.Debug("Server startup failed", slog.Any("cause", err))
 		}
