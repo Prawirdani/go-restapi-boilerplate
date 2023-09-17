@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -21,12 +20,12 @@ type requestLogAttributes struct {
 	StatusCode int
 	StatusText string
 	TimeTaken  time.Duration
-	Body       []byte
 }
 
 type resRecorder struct {
 	http.ResponseWriter
 	Status int
+	Body   []byte
 }
 
 func (rr *resRecorder) WriteHeader(code int) {
@@ -42,7 +41,6 @@ func HttpRequestLogger(rl requestLogAttributes) {
 		slog.String("from", rl.Address),
 		slog.Int("status_code", rl.StatusCode),
 		slog.String("status_text", rl.StatusText),
-		slog.String("body", string(rl.Body)),
 		slog.Float64("time_taken(ms)", float64(rl.TimeTaken.Microseconds())/float64(1000)),
 	)
 }
@@ -66,16 +64,6 @@ func RequestLogger(next http.Handler) http.Handler {
 			StatusCode: rec.Status,
 			StatusText: http.StatusText(rec.Status),
 			TimeTaken:  duration,
-		}
-
-		if r.Method == http.MethodPost && rec.Status > 201 {
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				slog.Error("requestLogger.bodyCatcher", "cause", err)
-			}
-			defer r.Body.Close()
-
-			logAttributes.Body = body
 		}
 
 		HttpRequestLogger(*logAttributes)

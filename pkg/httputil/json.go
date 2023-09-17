@@ -14,7 +14,7 @@ func SendJson(w http.ResponseWriter, status_code int, data interface{}) {
 
 	err := json.NewEncoder(w).Encode(response)
 	if err != nil {
-		slog.Error("json.Send", "cause", err)
+		slog.Error("httputil.SendJson", "cause", err)
 	}
 }
 
@@ -22,12 +22,18 @@ func BindJson(r *http.Request, request interface{}) error {
 	defer r.Body.Close()
 	err := json.NewDecoder(r.Body).Decode(request)
 	if err != nil {
-		slog.Error("json.Bind", "cause", err)
 		return err
 	}
 	return nil
 }
 
-func SendError(w http.ResponseWriter, err error) {
-	SendJson(w, parseErrors(err).Code, parseErrors(err).Message)
+func SendError(w http.ResponseWriter, Err error) {
+	w.Header().Set("Content-Type", "application/json")
+	response := NewErrorResponse(Err)
+	w.WriteHeader(response.Code)
+
+	err := json.NewEncoder(w).Encode(response)
+	if err != nil {
+		slog.Error("httputil.SendErr", "cause", err)
+	}
 }
