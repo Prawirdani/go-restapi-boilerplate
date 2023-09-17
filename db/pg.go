@@ -6,11 +6,10 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/prawirdani/go-restapi-boilerplate/config"
 )
 
-func NewPostgreSQL(c config.Config) *pgx.Conn {
-	db, err := pgx.Connect(context.Background(), c.Postgres.DSN)
+func NewPostgreSQL() *pgx.Conn {
+	db, err := pgx.Connect(context.Background(), os.Getenv("PG_DSN"))
 	if err != nil {
 		slog.Error("PGSQL Init Failed", "cause", err)
 		os.Exit(1)

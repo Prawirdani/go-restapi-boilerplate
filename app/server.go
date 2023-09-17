@@ -8,28 +8,25 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/prawirdani/go-restapi-boilerplate/config"
 )
 
 type Server struct {
 	*http.Server
-	Env string
 }
 
-func NewServer(c *config.Config, handler http.Handler) *Server {
+func NewServer(handler http.Handler) *Server {
 	svr := http.Server{
-		Addr:         c.Server.Port,
+		Addr:         ":" + os.Getenv("APP_PORT"),
 		Handler:      handler,
-		ReadTimeout:  c.Server.ReadTimeout * time.Second,
-		WriteTimeout: c.Server.WriteTimeout * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
 	}
-	return &Server{&svr, c.Server.Env}
+	return &Server{&svr}
 }
 
 func (s *Server) Start() {
 	go func() {
-		slog.Info("Server started", slog.String("environment", s.Env), slog.String("port", s.Addr))
+		slog.Info("Server started", slog.String("port", s.Addr))
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			slog.Debug("Server startup failed", slog.Any("cause", err))
 		}

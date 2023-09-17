@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/prawirdani/go-restapi-boilerplate/config"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/logger"
 	"github.com/rs/cors"
@@ -15,7 +14,7 @@ import (
 	"github.com/unrolled/secure"
 )
 
-func NewMainRouter(c *config.Config) *chi.Mux {
+func NewMainRouter() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(panicRecoverer)
@@ -25,7 +24,7 @@ func NewMainRouter(c *config.Config) *chi.Mux {
 		AllowedOrigins:   []string{"*"}, // Add Allowed Origins, eg: frontend
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"*"},
-		AllowCredentials: c.Cors.Credentials,
+		AllowCredentials: true,
 	}).Handler)
 
 	r.Use(secure.New(secure.Options{

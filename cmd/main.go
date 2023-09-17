@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log/slog"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/prawirdani/go-restapi-boilerplate/app"
@@ -18,17 +19,17 @@ func init() {
 	logger.InitLogger()
 }
 
-//	@title			Swagger Docs (RESTAPI BoilerPlate)
-//	@version		1.0
-//	@description	This is an api Swagger.
-//	@BasePath		/v1
+// @title			Swagger Docs (RESTAPI BoilerPlate)
+// @version		1.0
+// @description	This is an api Swagger.
+// @BasePath		/v1
 func main() {
-	conf, err := config.LoadConfig()
-	if err != nil {
-		slog.Error("Load config error", "error", err)
+	if err := config.LoadEnv(); err != nil {
+		slog.Error("env variable not provided", "cause", err)
+		os.Exit(1)
 	}
 
-	pgDB := db.NewPostgreSQL(*conf)
+	pgDB := db.NewPostgreSQL()
 	defer pgDB.Close(context.Background())
 
 	var initSchema bool
@@ -38,7 +39,7 @@ func main() {
 		db.InitSchema(pgDB)
 	}
 
-	mainRouter := app.NewMainRouter(conf)
+	mainRouter := app.NewMainRouter()
 	appRouter := app.NewSubRouter()
 
 	userRepository := user.NewUserRepository(pgDB)
@@ -51,6 +52,6 @@ func main() {
 
 	mainRouter.Mount("/", appRouter)
 
-	svr := app.NewServer(conf, mainRouter)
+	svr := app.NewServer(mainRouter)
 	svr.Start()
 }
