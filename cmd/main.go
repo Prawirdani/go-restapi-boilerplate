@@ -54,6 +54,3 @@ func main() {
 	svr := app.NewServer(conf, mainRouter)
 	svr.Start()
 }
-
-func someHandler(c chi.Context) {
-}
