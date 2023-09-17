@@ -10,7 +10,6 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Cors     CorsConfig
-	Mysql    MysqlConfig
 	Postgres PostgreSQLConfig
 }
 
@@ -25,9 +24,6 @@ type CorsConfig struct {
 	Credentials bool
 }
 
-type MysqlConfig struct {
-	DSN string
-}
 type PostgreSQLConfig struct {
 	DSN string
 }
