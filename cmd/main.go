@@ -32,17 +32,17 @@ func main() {
 	defer pgDB.Close(context.Background())
 
 	mainRouter := app.NewMainRouter()
-	appRouter := app.NewSubRouter()
+	v1 := app.NewSubRouter()
 
 	userRepository := user.NewUserRepository(pgDB)
 	userService := user.NewUserService(userRepository)
 	userHandler := user.NewUserHandler(userService)
 
-	appRouter.Route("/v1", func(r chi.Router) {
+	v1.Route("/v1", func(r chi.Router) {
 		userHandler.Routes(r)
 	})
 
-	mainRouter.Mount("/", appRouter)
+	mainRouter.Mount("/", v1)
 
 	svr := app.NewServer(mainRouter)
 	svr.Start()
