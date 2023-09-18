@@ -1,16 +1,15 @@
-ifeq ($(wildcard .env),)
-    # If .env doesn't exist, use environment variables
-    DB_URI ?= $(shell echo $$DB_URI)
-else
-    # If .env exists, load variables from it
-    include .env
-endif
-
 run:
 	go run cmd/main.go
-
 tidy:
 	go mod tidy
+swag:
+	swag init -g cmd/main.go
+swag-fmt:
+	swag fmt
+dev:
+	make swag
+	make swag-fmt
+	make run
 
 test-all:
 	go test -v --failfast ./test/...
