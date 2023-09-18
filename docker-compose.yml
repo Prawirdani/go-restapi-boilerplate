@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  pg-server:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=example
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1337
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql  
+
+  api-service:
+    build: .
+    environment:
+      - APP_PORT=8080
+      - PG_DSN=postgres://postgres:1337@pg-server/example
+    ports:
+      - 8080:8080
+    restart: on-failure
+    depends_on:
+      - pg-server
