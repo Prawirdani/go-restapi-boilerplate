@@ -55,7 +55,7 @@ func (ur *UserRepositoryImpl) GetUsers(ctx context.Context) ([]User, error) {
 	for rows.Next() {
 		var each User
 		if err := rows.Scan(&each.Id, &each.Username, &each.Email, &each.CreatedAt); err != nil {
-			return nil, httputil.ErrInternalServer(err)
+			return nil, err
 		}
 		users = append(users, each)
 	}
