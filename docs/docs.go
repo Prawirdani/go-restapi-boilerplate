@@ -27,7 +27,7 @@ const docTemplate = `{
                 "summary": "List Users",
                 "responses": {
                     "200": {
-                        "description": "desc",
+                        "description": "OK",
                         "schema": {
                             "allOf": [
                                 {
@@ -46,11 +46,20 @@ const docTemplate = `{
                                 }
                             ]
                         }
+                    },
+                    "default": {
+                        "description": "400 \u0026 500 status, error field can be string or object",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.ErrorResponse"
+                        }
                     }
                 }
             },
             "post": {
                 "description": "Create New User",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -58,11 +67,28 @@ const docTemplate = `{
                     "Users"
                 ],
                 "summary": "Create User",
+                "parameters": [
+                    {
+                        "description": "please exclude non-required fields before firing the request",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    }
+                ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/httputil.Response"
+                        }
+                    },
+                    "default": {
+                        "description": "400 \u0026 500 status, error field can be string or object",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.ErrorResponse"
                         }
                     }
                 }
@@ -70,18 +96,18 @@ const docTemplate = `{
         },
         "/users/{userId}": {
             "get": {
-                "description": "Returning an user with given id",
+                "description": "Returning an user object with given id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Users"
                 ],
-                "summary": "Users by Id",
+                "summary": "User by id",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "User Id",
+                        "description": "user_id",
                         "name": "userId",
                         "in": "path",
                         "required": true
@@ -89,7 +115,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "desc",
+                        "description": "OK",
                         "schema": {
                             "allOf": [
                                 {
@@ -105,12 +131,30 @@ const docTemplate = `{
                                 }
                             ]
                         }
+                    },
+                    "default": {
+                        "description": "400 \u0026 500 status, error field can be string or object",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.ErrorResponse"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
+        "httputil.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "httputil.Response": {
             "type": "object",
             "properties": {

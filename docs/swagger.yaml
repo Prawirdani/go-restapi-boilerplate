@@ -1,5 +1,13 @@
 basePath: /v1
 definitions:
+  httputil.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      error: {}
+      status:
+        type: string
+    type: object
   httputil.Response:
     properties:
       code:
@@ -35,7 +43,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: desc
+          description: OK
           schema:
             allOf:
             - $ref: '#/definitions/httputil.Response'
@@ -45,26 +53,43 @@ paths:
                     $ref: '#/definitions/user.User'
                   type: array
               type: object
+        default:
+          description: 400 & 500 status, error field can be string or object
+          schema:
+            $ref: '#/definitions/httputil.ErrorResponse'
       summary: List Users
       tags:
       - Users
     post:
+      consumes:
+      - application/json
       description: Create New User
+      parameters:
+      - description: please exclude non-required fields before firing the request
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/user.User'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/httputil.Response'
+        default:
+          description: 400 & 500 status, error field can be string or object
+          schema:
+            $ref: '#/definitions/httputil.ErrorResponse'
       summary: Create User
       tags:
       - Users
   /users/{userId}:
     get:
-      description: Returning an user with given id
+      description: Returning an user object with given id
       parameters:
-      - description: User Id
+      - description: user_id
         in: path
         name: userId
         required: true
@@ -73,7 +98,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: desc
+          description: OK
           schema:
             allOf:
             - $ref: '#/definitions/httputil.Response'
@@ -81,7 +106,11 @@ paths:
                 data:
                   $ref: '#/definitions/user.User'
               type: object
-      summary: Users by Id
+        default:
+          description: 400 & 500 status, error field can be string or object
+          schema:
+            $ref: '#/definitions/httputil.ErrorResponse'
+      summary: User by id
       tags:
       - Users
 swagger: "2.0"

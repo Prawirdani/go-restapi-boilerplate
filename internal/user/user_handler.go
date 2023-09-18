@@ -28,7 +28,8 @@ func (h *UserHandler) Routes(r chi.Router) {
 //	@Description	Returning list of users
 //	@Produce		json
 //	@Tags			Users
-//	@Success		200	{object}	httputil.Response{data=[]user.User}	"desc"
+//	@Success		200		{object}	httputil.Response{data=[]user.User}
+//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
 //	@Router			/users [get]
 func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 	users, err := h.userService.FindAll(r.Context())
@@ -40,12 +41,13 @@ func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 	httputil.SendJson(w, http.StatusOK, users)
 }
 
-//	@Summary		Users by Id
-//	@Description	Returning an user with given id
+//	@Summary		User by id
+//	@Description	Returning an user object with given id
 //	@Produce		json
-//	@Param			userId	path	int	true	"User Id"
+//	@Param			userId	path	int	true	"user_id"
 //	@Tags			Users
-//	@Success		200	{object}	httputil.Response{data=user.User}	"desc"
+//	@Success		200		{object}	httputil.Response{data=user.User}
+//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
 //	@Router			/users/{userId} [get]
 func (h *UserHandler) ById(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "userId")
@@ -67,9 +69,12 @@ func (h *UserHandler) ById(w http.ResponseWriter, r *http.Request) {
 
 //	@Summary		Create User
 //	@Description	Create New User
+//	@Accept			json
+//	@Param			User	body	user.User	true	"please exclude non-required fields before firing the request"
 //	@Produce		json
 //	@Tags			Users
-//	@Success		200	{object}	httputil.Response
+//	@Success		201		{object}	httputil.Response
+//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
 //	@Router			/users [post]
 func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var reqBody User
