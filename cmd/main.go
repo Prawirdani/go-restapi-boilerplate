@@ -18,10 +18,10 @@ func init() {
 	logger.InitLogger()
 }
 
-// @title			Swagger Docs (RESTAPI BoilerPlate)
-// @version		1.0
-// @description	This is an api Swagger.
-// @BasePath		/v1
+//	@title			Swagger Docs (RESTAPI BoilerPlate)
+//	@version		1.0
+//	@description	This is an api Swagger.
+//	@BasePath		/v1
 func main() {
 	if err := config.LoadEnv(); err != nil {
 		slog.Error("env variable not provided", "cause", err)
