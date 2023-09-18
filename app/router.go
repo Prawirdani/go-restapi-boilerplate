@@ -18,7 +18,7 @@ func NewMainRouter() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(panicRecoverer)
-	r.Use(logger.RequestLogger) // Json formatted Request Log for Prod Env
+	r.Use(logger.RequestLogger)
 
 	r.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // Add Allowed Origins, eg: frontend
