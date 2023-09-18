@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"log/slog"
 	"os"
 
@@ -31,13 +30,6 @@ func main() {
 
 	pgDB := db.NewPostgreSQL()
 	defer pgDB.Close(context.Background())
-
-	var initSchema bool
-	flag.BoolVar(&initSchema, "initschema", false, "Initialize the schema")
-	flag.Parse()
-	if initSchema {
-		db.InitSchema(pgDB)
-	}
 
 	mainRouter := app.NewMainRouter()
 	appRouter := app.NewSubRouter()
