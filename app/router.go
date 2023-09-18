@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -11,6 +12,7 @@ import (
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/logger"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
+
 	"github.com/unrolled/secure"
 )
 
@@ -41,7 +43,11 @@ func NewMainRouter() *chi.Mux {
 
 	r.Use(middleware.Compress(6))
 
-	r.Get("/swagger/*", httpSwagger.WrapHandler)
+	// Enable Swagger on development environment
+	if os.Getenv("ENV") == "development" {
+		slog.Info(fmt.Sprintf("Swagger available at http://localhost:%s/swagger/index.html", os.Getenv("APP_PORT")))
+		r.Get("/swagger/*", httpSwagger.WrapHandler)
+	}
 
 	return r
 }
