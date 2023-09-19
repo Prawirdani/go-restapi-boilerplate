@@ -10,7 +10,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/logger"
-	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/unrolled/secure"
@@ -22,12 +21,8 @@ func NewMainRouter() *chi.Mux {
 	r.Use(panicRecoverer)
 	r.Use(logger.RequestLogger)
 
-	r.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // Add Allowed Origins, eg: frontend
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"*"},
-		AllowCredentials: true,
-	}).Handler)
+
+	r.Use(cors)
 
 	r.Use(secure.New(secure.Options{
 		ContentTypeNosniff: true,
@@ -65,6 +60,17 @@ func panicRecoverer(next http.Handler) http.Handler {
 				httputil.SendError(w, fmt.Errorf("%v", rvr))
 			}
 		}()
+		next.ServeHTTP(w, r)
+	})
+}
+
+func cors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origins", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 		next.ServeHTTP(w, r)
 	})
 }
