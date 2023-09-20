@@ -24,7 +24,7 @@ func init() {
 //	@BasePath		/v1
 func main() {
 	if err := config.LoadEnv(); err != nil {
-		slog.Error("env variable not provided", "cause", err)
+		slog.Error("env load error", "cause", err)
 		os.Exit(1)
 	}
 
