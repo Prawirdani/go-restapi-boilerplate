@@ -12,7 +12,7 @@ import (
 func NewPostgreSQL() *pgxpool.Pool {
 	pgConf, err := pgxpool.ParseConfig(os.Getenv("PG_DSN"))
 	if err != nil {
-		slog.Error("Error Parsing PG_DSN", err)
+		slog.Error("Error parsing postgres dns address", err)
 	}
 	pgConf.MaxConns = 15
 	pgConf.MinConns = 1
