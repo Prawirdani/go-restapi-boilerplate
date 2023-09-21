@@ -4,12 +4,22 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func NewPostgreSQL() *pgxpool.Pool {
-	db, err := pgxpool.New(context.Background(), os.Getenv("PG_DSN"))
+	pgConf, err := pgxpool.ParseConfig(os.Getenv("PG_DSN"))
+	if err != nil {
+		slog.Error("Error Parsing PG_DSN", err)
+	}
+	pgConf.MaxConns = 15
+	pgConf.MinConns = 1
+	pgConf.MaxConnLifetime = time.Hour * 1
+	pgConf.MaxConnIdleTime = time.Minute * 15
+
+	db, err := pgxpool.NewWithConfig(context.Background(), pgConf)
 	if err != nil {
 		slog.Error("PGSQL Init Failed", "cause", err)
 		os.Exit(1)

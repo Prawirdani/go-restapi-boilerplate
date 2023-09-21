@@ -51,7 +51,7 @@ func (ur *UserRepositoryImpl) GetUserById(ctx context.Context, id int) (*User, e
 func (ur *UserRepositoryImpl) GetUsers(ctx context.Context) ([]User, error) {
 	var users []User
 
-	rows, _ := ur.postgres.Query(ctx, "Select * from users")
+	rows, _ := ur.postgres.Query(ctx, "Select * from users LIMIT 100")
 
 	for rows.Next() {
 		var each User
