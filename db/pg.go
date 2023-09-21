@@ -14,8 +14,8 @@ func NewPostgreSQL() *pgxpool.Pool {
 	if err != nil {
 		slog.Error("Error parsing postgres dns address", err)
 	}
-	pgConf.MaxConns = 15
-	pgConf.MinConns = 1
+	pgConf.MaxConns = 5
+	pgConf.MinConns = 0
 	pgConf.MaxConnLifetime = time.Hour * 1
 	pgConf.MaxConnIdleTime = time.Minute * 15
 
