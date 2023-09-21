@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
 )
 
@@ -14,10 +15,10 @@ type UserRepository interface {
 }
 
 type UserRepositoryImpl struct {
-	postgres *pgx.Conn
+	postgres *pgxpool.Pool
 }
 
-func NewUserRepository(pgConn *pgx.Conn) UserRepository {
+func NewUserRepository(pgConn *pgxpool.Pool) UserRepository {
 	return &UserRepositoryImpl{postgres: pgConn}
 }
 

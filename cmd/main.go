@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log/slog"
 	"os"
 
@@ -18,23 +17,23 @@ func init() {
 	logger.InitLogger()
 }
 
-//	@title			Swagger Docs (RESTAPI BoilerPlate)
-//	@version		1.0
-//	@description	This is an api Swagger.
-//	@BasePath		/v1
+// @title			Swagger Docs (RESTAPI BoilerPlate)
+// @version		1.0
+// @description	This is an api Swagger.
+// @BasePath		/v1
 func main() {
 	if err := config.LoadEnv(); err != nil {
 		slog.Error("env load error", "cause", err)
 		os.Exit(1)
 	}
 
-	pgDB := db.NewPostgreSQL()
-	defer pgDB.Close(context.Background())
+	psqlDB := db.NewPostgreSQL()
+	defer psqlDB.Close()
 
 	mainRouter := app.NewMainRouter()
 	v1 := app.NewSubRouter()
 
-	userRepository := user.NewUserRepository(pgDB)
+	userRepository := user.NewUserRepository(psqlDB)
 	userService := user.NewUserService(userRepository)
 	userHandler := user.NewUserHandler(userService)
 

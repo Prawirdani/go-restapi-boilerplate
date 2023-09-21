@@ -5,11 +5,11 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewPostgreSQL() *pgx.Conn {
-	db, err := pgx.Connect(context.Background(), os.Getenv("PG_DSN"))
+func NewPostgreSQL() *pgxpool.Pool {
+	db, err := pgxpool.New(context.Background(), os.Getenv("PG_DSN"))
 	if err != nil {
 		slog.Error("PGSQL Init Failed", "cause", err)
 		os.Exit(1)
@@ -22,4 +22,3 @@ func NewPostgreSQL() *pgx.Conn {
 	slog.Info("PostgreSQL DB Connection Established")
 	return db
 }
-
