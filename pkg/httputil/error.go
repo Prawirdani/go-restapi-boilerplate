@@ -103,5 +103,5 @@ func parsePostgreError(err *pgconn.PgError) *apiError {
 	if err.Code == "23505" { // Duplicate Key Error Code
 		return ErrBadRequest(err.Detail)
 	}
-	return ErrInternalServer(err.Detail)
+	return ErrInternalServer(err)
 }
