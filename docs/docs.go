@@ -15,6 +15,46 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login Payload",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.Response"
+                        }
+                    },
+                    "default": {
+                        "description": "400 \u0026 500 status, error field can be string or object",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Returning list of users",
@@ -143,6 +183,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "auth.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "httputil.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -171,6 +226,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "email",
+                "password",
                 "username"
             ],
             "properties": {
@@ -182,6 +238,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "password": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
