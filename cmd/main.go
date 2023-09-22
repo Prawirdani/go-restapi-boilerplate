@@ -9,6 +9,7 @@ import (
 	"github.com/prawirdani/go-restapi-boilerplate/config"
 	"github.com/prawirdani/go-restapi-boilerplate/db"
 	_ "github.com/prawirdani/go-restapi-boilerplate/docs"
+	"github.com/prawirdani/go-restapi-boilerplate/internal/auth"
 	"github.com/prawirdani/go-restapi-boilerplate/internal/user"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/logger"
 )
@@ -34,11 +35,16 @@ func main() {
 	v1 := app.NewSubRouter()
 
 	userRepository := user.NewUserRepository(psqlDB)
+
+	authService := auth.NewAuthService(userRepository)
 	userService := user.NewUserService(userRepository)
+
+	authHandler := auth.NewAuthHandler(authService)
 	userHandler := user.NewUserHandler(userService)
 
 	v1.Route("/v1", func(r chi.Router) {
 		userHandler.Routes(r)
+		authHandler.Routes(r)
 	})
 
 	mainRouter.Mount("/", v1)
