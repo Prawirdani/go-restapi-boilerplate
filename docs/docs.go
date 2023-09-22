@@ -146,8 +146,8 @@ const docTemplate = `{
                 "summary": "User by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user_id",
+                        "type": "string",
+                        "description": "user_id (ULID)",
                         "name": "userId",
                         "in": "path",
                         "required": true

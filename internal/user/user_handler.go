@@ -50,8 +50,6 @@ func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 //	@Router			/users/{userId} [get]
 func (h *UserHandler) ById(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "userId")
-
-
 	user, err := h.userService.FindById(r.Context(), userId)
 	if err != nil {
 		httputil.SendError(w, err)

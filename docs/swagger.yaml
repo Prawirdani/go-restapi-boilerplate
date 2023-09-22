@@ -128,11 +128,11 @@ paths:
     get:
       description: Returning an user object with given id
       parameters:
-      - description: user_id
+      - description: user_id (ULID)
         in: path
         name: userId
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:

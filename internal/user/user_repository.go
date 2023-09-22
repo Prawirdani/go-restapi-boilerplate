@@ -37,7 +37,6 @@ func (ur *UserRepositoryImpl) GetUserById(ctx context.Context, id string) (*User
 	q := `SELECT id, username, email, created_at from users WHERE id = $1`
 
 	var user User
-
 	if err := ur.psql.QueryRow(ctx, q, id).Scan(&user.Id, &user.Username, &user.Email, &user.CreatedAt); err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, httputil.ErrNotFound("user not found")
@@ -51,7 +50,6 @@ func (ur *UserRepositoryImpl) GetUserById(ctx context.Context, id string) (*User
 // GetUsers implements UserRepository.
 func (ur *UserRepositoryImpl) GetUsers(ctx context.Context) ([]User, error) {
 	var users []User
-
 	rows, _ := ur.psql.Query(ctx, "Select id, username, email, created_at from users LIMIT 100")
 
 	for rows.Next() {
