@@ -1,16 +1,16 @@
 ### Personal project boilerplate for go restful api server.
 Based on [Chi](https://github.com/go-chi) router.
 additional:
-- Postgres driver: [pgx](github.com/jackc/pgx/v5)
+- Postgres driver: [pgx](https://github.com/jackc/pgx)
 - Middleware:
     - [Secure](https://github.com/unrolled/secure)
     - [Cors](https://github.com/rs/cors)
 - Authentication:
-    - [JWT](https://github.com/golang-jwt/jwt/v5)
+    - [JWT](https://github.com/golang-jwt/jwt)
 - Utility:
     - slog logger `go 1.21`
-    - [Request Validator](https://github.com/go-playground/validator/v10)
-    - [ULID](https://github.com/oklog/ulid/v2)
+    - [Request Validator](https://github.com/go-playground/validator)
+    - [ULID](https://github.com/oklog/ulid)
 - Docs:
     - [Swagger](https://github.com/swaggo/http-swagger)
 
