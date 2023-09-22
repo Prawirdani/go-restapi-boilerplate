@@ -11,34 +11,34 @@ import (
 type UserRepository interface {
 	GetUsers(ctx context.Context) ([]User, error)
 	CreateUser(ctx context.Context, newUser User) error
-	GetUserById(ctx context.Context, id int) (*User, error)
+	GetUserById(ctx context.Context, id string) (*User, error)
 	GetUserWithPassword(ctx context.Context, email string) (*User, error)
 }
 
 type UserRepositoryImpl struct {
-	postgres *pgxpool.Pool
+	psql *pgxpool.Pool
 }
 
 func NewUserRepository(pgConn *pgxpool.Pool) UserRepository {
-	return &UserRepositoryImpl{postgres: pgConn}
+	return &UserRepositoryImpl{psql: pgConn}
 }
 
 // CreateUser implements UserRepository.
 func (ur *UserRepositoryImpl) CreateUser(ctx context.Context, newUser User) error {
-	q := `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`
-	if _, err := ur.postgres.Exec(ctx, q, newUser.Username, newUser.Email, newUser.Password); err != nil {
+	q := `INSERT INTO users (id, username, email, password) VALUES ($1, $2, $3, $4)`
+	if _, err := ur.psql.Exec(ctx, q, newUser.Id, newUser.Username, newUser.Email, newUser.Password); err != nil {
 		return err
 	}
 	return nil
 }
 
 // GetUserById implements UserRepository.
-func (ur *UserRepositoryImpl) GetUserById(ctx context.Context, id int) (*User, error) {
+func (ur *UserRepositoryImpl) GetUserById(ctx context.Context, id string) (*User, error) {
 	q := `SELECT id, username, email, created_at from users WHERE id = $1`
 
 	var user User
 
-	if err := ur.postgres.QueryRow(ctx, q, id).Scan(&user.Id, &user.Username, &user.Email, &user.CreatedAt); err != nil {
+	if err := ur.psql.QueryRow(ctx, q, id).Scan(&user.Id, &user.Username, &user.Email, &user.CreatedAt); err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, httputil.ErrNotFound("user not found")
 		}
@@ -52,7 +52,7 @@ func (ur *UserRepositoryImpl) GetUserById(ctx context.Context, id int) (*User, e
 func (ur *UserRepositoryImpl) GetUsers(ctx context.Context) ([]User, error) {
 	var users []User
 
-	rows, _ := ur.postgres.Query(ctx, "Select id, username, email, created_at from users LIMIT 100")
+	rows, _ := ur.psql.Query(ctx, "Select id, username, email, created_at from users LIMIT 100")
 
 	for rows.Next() {
 		var each User
@@ -70,7 +70,7 @@ func (ur *UserRepositoryImpl) GetUserWithPassword(ctx context.Context, email str
 	var user User
 	q := `SELECT id, username, email, password from users WHERE email = $1`
 
-	if err := ur.postgres.QueryRow(ctx, q, email).Scan(&user.Id, &user.Username, &user.Email, &user.Password); err != nil {
+	if err := ur.psql.QueryRow(ctx, q, email).Scan(&user.Id, &user.Username, &user.Email, &user.Password); err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, httputil.ErrNotFound("user not found")
 		}

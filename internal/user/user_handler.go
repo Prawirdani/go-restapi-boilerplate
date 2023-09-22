@@ -2,7 +2,6 @@ package user
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
@@ -44,7 +43,7 @@ func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 //	@Summary		User by id
 //	@Description	Returning an user object with given id
 //	@Produce		json
-//	@Param			userId	path	int	true	"user_id"
+//	@Param			userId	path	string	true	"user_id (ULID)"
 //	@Tags			Users
 //	@Success		200		{object}	httputil.Response{data=user.User}
 //	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
@@ -52,13 +51,8 @@ func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) ById(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "userId")
 
-	uId, err := strconv.Atoi(userId)
-	if err != nil {
-		httputil.SendError(w, httputil.ErrBadRequest("Bad URL Params"))
-		return
-	}
 
-	user, err := h.userService.FindById(r.Context(), uId)
+	user, err := h.userService.FindById(r.Context(), userId)
 	if err != nil {
 		httputil.SendError(w, err)
 		return

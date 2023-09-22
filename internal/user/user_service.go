@@ -9,7 +9,7 @@ import (
 )
 
 type UserService interface {
-	FindById(ctx context.Context, id int) (*User, error)
+	FindById(ctx context.Context, id string) (*User, error)
 	FindAll(ctx context.Context) ([]User, error)
 	Save(ctx context.Context, request User) error
 }
@@ -31,7 +31,7 @@ func (us *UserServiceImpl) FindAll(ctx context.Context) ([]User, error) {
 }
 
 // FindById implements UserService.
-func (us *UserServiceImpl) FindById(ctx context.Context, id int) (*User, error) {
+func (us *UserServiceImpl) FindById(ctx context.Context, id string) (*User, error) {
 	ctxWT, cancel := context.WithTimeout(ctx, us.ctxTimeout)
 	defer cancel()
 	return us.userRepository.GetUserById(ctxWT, id)
@@ -46,7 +46,10 @@ func (us *UserServiceImpl) Save(ctx context.Context, request User) error {
 		slog.Error("User.service.req_validator", "cause", err)
 		return err
 	}
-	request.HashPassword()
+	request.AssignULID()
+	if err := request.HashPassword(); err != nil {
+		return err
+	}
 
 	return us.userRepository.CreateUser(ctxWT, request)
 }
