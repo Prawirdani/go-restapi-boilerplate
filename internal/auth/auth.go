@@ -11,3 +11,5 @@ func (lr *LoginRequest) IsPasswordMatch(storedPass string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(storedPass), []byte(lr.Password))
 	return err == nil
 }
+
+

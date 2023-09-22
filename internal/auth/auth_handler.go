@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/prawirdani/go-restapi-boilerplate/internal/middleware"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
+	"github.com/prawirdani/go-restapi-boilerplate/pkg/jwt"
 )
 
 type AuthHandler struct {
@@ -19,17 +21,19 @@ func NewAuthHandler(us AuthService) *AuthHandler {
 
 func (h *AuthHandler) Routes(r chi.Router) {
 	r.Post("/auth/login", h.Login)
+	r.With(middleware.ValidateAccessToken).Get("/auth/me", h.Me)
+	r.Get("/auth/refresh", h.RefreshToken)
 }
 
-//	@Summary		Login
-//	@Description	Login
-//	@Accept			json
-//	@Param			User	body	auth.LoginRequest	true	"Login Payload"
-//	@Produce		json
-//	@Tags			Auth
-//	@Success		200		{object}	httputil.Response
-//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
-//	@Router			/auth/login [post]
+// @Summary		Login
+// @Description	Login
+// @Accept			json
+// @Param			User	body	auth.LoginRequest	true	"Login Payload"
+// @Produce		json
+// @Tags			Auth
+// @Success		200		{object}	httputil.Response
+// @Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
+// @Router			/auth/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var reqBody LoginRequest
 	if err := httputil.BindJson(r, &reqBody); err != nil {
@@ -37,11 +41,34 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := h.authService.Login(r.Context(), reqBody)
-	if err != nil || token == "" {
+	tokenPairs, err := h.authService.Login(r.Context(), reqBody)
+	if err != nil {
 		httputil.SendError(w, err)
 		return
 	}
 
-	httputil.SendJson(w, 200, token)
+	tokenPairs.SetToCookies(w)
+	httputil.SendJson(w, 200, tokenPairs)
+}
+
+func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
+	accessTokenPayload := r.Context().Value(middleware.AccessTokenContextKey)
+	httputil.SendJson(w, 200, accessTokenPayload)
+}
+
+func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
+	refreshTokenClaims, err := jwt.ValidateFromRequest(r, httputil.REFRESH_TOKEN_COOKIE_NAME)
+	if err != nil {
+		httputil.SendError(w, err)
+		return
+	}
+
+	newAccessToken, err := h.authService.RefreshToken(r.Context(), refreshTokenClaims["id"].(string))
+	if err != nil {
+		httputil.SendError(w, err)
+		return
+	}
+
+	httputil.SetCookieAccessToken(newAccessToken, w)
+	httputil.SendJson(w, 200, map[string]string{"access_token": newAccessToken})
 }
