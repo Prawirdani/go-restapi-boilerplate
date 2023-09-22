@@ -5,9 +5,12 @@ additional:
 - Middleware:
     - [Secure](https://github.com/unrolled/secure)
     - [Cors](https://github.com/rs/cors)
+- Authentication:
+    - [JWT](https://github.com/golang-jwt/jwt/v5)
 - Utility:
     - slog logger `go 1.21`
     - [Request Validator](https://github.com/go-playground/validator/v10)
+    - [ULID](https://github.com/oklog/ulid/v2)
 - Docs:
     - [Swagger](https://github.com/swaggo/http-swagger)
 
