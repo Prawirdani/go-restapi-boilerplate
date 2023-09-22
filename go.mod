@@ -11,6 +11,7 @@ require (
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.2
 	github.com/unrolled/secure v1.13.0
+	golang.org/x/crypto v0.13.0
 )
 
 require (
@@ -30,7 +31,6 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/swaggo/files v1.0.1 // indirect
-	golang.org/x/crypto v0.13.0 // indirect
 	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect

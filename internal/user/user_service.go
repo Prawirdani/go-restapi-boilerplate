@@ -39,12 +39,14 @@ func (us *UserServiceImpl) FindById(ctx context.Context, id int) (*User, error) 
 
 // Save implements UserService.
 func (us *UserServiceImpl) Save(ctx context.Context, request User) error {
+	ctxWT, cancel := context.WithTimeout(ctx, us.ctxTimeout)
+	defer cancel()
+
 	if err := utils.ValidateRequest(request); err != nil {
 		slog.Error("User.service.req_validator", "cause", err)
 		return err
 	}
-	ctxWT, cancel := context.WithTimeout(ctx, us.ctxTimeout)
-	defer cancel()
+	request.HashPassword()
 
 	return us.userRepository.CreateUser(ctxWT, request)
 }
