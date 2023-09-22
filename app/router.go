@@ -7,19 +7,19 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
-	"github.com/prawirdani/go-restapi-boilerplate/pkg/logger"
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/unrolled/secure"
+	middleware "github.com/prawirdani/go-restapi-boilerplate/internal/middleware"
 )
 
 func NewMainRouter() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(panicRecoverer)
-	r.Use(logger.RequestLogger)
+	r.Use(middleware.RequestLogger)
 
 	r.Use(cors)
 
@@ -35,7 +35,7 @@ func NewMainRouter() *chi.Mux {
 		httputil.SendError(w, httputil.ErrMethodNotAllowed("ops! method not allowed"))
 	})
 
-	r.Use(middleware.Compress(6))
+	r.Use(chiMiddleware.Compress(6))
 
 	// Enable Swagger on development environment
 	if os.Getenv("ENV") == "development" {

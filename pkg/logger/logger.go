@@ -13,7 +13,7 @@ func InitLogger() {
 	slog.SetDefault(logger)
 }
 
-type requestLogAttributes struct {
+type RequestLogAttributes struct {
 	Method      string
 	Uri         string
 	ForwardedIP string
@@ -22,18 +22,18 @@ type requestLogAttributes struct {
 	TimeTaken   time.Duration
 }
 
-type resRecorder struct {
+type ResRecorder struct {
 	http.ResponseWriter
 	Status int
 	Body   []byte
 }
 
-func (rr *resRecorder) WriteHeader(code int) {
+func (rr *ResRecorder) WriteHeader(code int) {
 	rr.Status = code
 	rr.ResponseWriter.WriteHeader(code)
 }
 
-func HttpRequestLogger(rl requestLogAttributes) {
+func HttpRequestLogger(rl RequestLogAttributes) {
 	slog.Info(
 		"HTTP Request Log",
 		slog.String("method", rl.Method),
@@ -45,30 +45,3 @@ func HttpRequestLogger(rl requestLogAttributes) {
 	)
 }
 
-/* Request Logger Middleware*/
-func RequestLogger(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-
-		rec := &resRecorder{
-			ResponseWriter: w,
-			Status:         http.StatusOK,
-		}
-		next.ServeHTTP(rec, r)
-
-		// Retrieve forwarded client ip from reverse-proxy
-		forwardedIP := r.Header.Get("X-Real-IP")
-		duration := time.Since(start)
-
-		logAttributes := &requestLogAttributes{
-			Method:      r.Method,
-			Uri:         r.RequestURI,
-			ForwardedIP: forwardedIP,
-			StatusCode:  rec.Status,
-			StatusText:  http.StatusText(rec.Status),
-			TimeTaken:   duration,
-		}
-
-		HttpRequestLogger(*logAttributes)
-	})
-}
