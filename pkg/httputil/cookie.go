@@ -6,8 +6,10 @@ import (
 )
 
 const (
-	REFRESH_TOKEN_COOKIE_NAME = "refreshToken"
-	ACCESS_TOKEN_COOKIE_NAME  = "accessToken"
+	// Refresh token cookie name
+	RFT_COOKIE_NAME = "refreshToken"
+	// Access token cookie name
+	ACT_COOKIE_NAME = "accessToken"
 )
 
 func GetCookieValue(r *http.Request, tokenName string) string {
@@ -39,12 +41,4 @@ func SetCookies(name string, value string, expires time.Time, w http.ResponseWri
 	}
 
 	http.SetCookie(w, cookie)
-}
-
-func SetCookieAccessToken(tokenValue string, rw http.ResponseWriter) {
-	SetCookies(ACCESS_TOKEN_COOKIE_NAME, tokenValue, time.Now().Add(1*time.Minute), rw)
-}
-
-func SetCookieRefreshToken(tokenValue string, rw http.ResponseWriter) {
-	SetCookies(REFRESH_TOKEN_COOKIE_NAME, tokenValue, time.Now().Add(1*time.Hour), rw)
 }
