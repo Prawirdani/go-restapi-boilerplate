@@ -1,5 +1,5 @@
 run:
-	go run cmd/main.go
+	cd cmd && go run main.go
 tidy:
 	go mod tidy
 swag:
@@ -10,6 +10,9 @@ dev:
 	make swag
 	make swag-fmt
 	make run
-
 test-all:
 	go test -v --failfast ./test/...
+build:
+	cd cmd && go build -o Binary main.go
+run-build:
+	cd cmd && ./Binary
