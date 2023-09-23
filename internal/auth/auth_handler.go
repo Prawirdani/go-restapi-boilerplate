@@ -20,9 +20,10 @@ func NewAuthHandler(us AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) Routes(r chi.Router) {
-	r.Post("/auth/login", h.Login)
-	r.With(middleware.ValidateAccessToken).Get("/auth/me", h.Me)
-	r.Get("/auth/refresh", h.RefreshToken)
+	r.Post("/login", h.Login)
+	r.Get("/refresh", h.RefreshToken)
+	r.With(middleware.ValidateAccessToken).Get("/me", h.Me)
+	r.With(middleware.ValidateAccessToken).Delete("/logout", h.Logout)
 }
 
 // @Summary		Login
@@ -71,4 +72,7 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	httputil.SetCookieAccessToken(newAccessToken, w)
 	httputil.SendJson(w, 200, map[string]string{"access_token": newAccessToken})
+}
+
+func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 }

@@ -42,9 +42,13 @@ func main() {
 	authHandler := auth.NewAuthHandler(authService)
 	userHandler := user.NewUserHandler(userService)
 
-	v1.Route("/v1", func(r chi.Router) {
-		userHandler.Routes(r)
-		authHandler.Routes(r)
+	v1.Route("/v1", func(rt chi.Router) {
+		rt.Route("/users", func(r chi.Router) {
+			userHandler.Routes(r)
+		})
+		rt.Route("/auth", func(r chi.Router) {
+			authHandler.Routes(r)
+		})
 	})
 
 	mainRouter.Mount("/", v1)

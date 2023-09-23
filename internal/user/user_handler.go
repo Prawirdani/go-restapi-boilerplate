@@ -18,9 +18,9 @@ func NewUserHandler(us UserService) *UserHandler {
 }
 
 func (h *UserHandler) Routes(r chi.Router) {
-	r.Get("/users", h.List)
-	r.Get("/users/{userId}", h.ById)
-	r.Post("/users", h.Create)
+	r.Get("/", h.List)
+	r.Post("/", h.Create)
+	r.Get("/{userId}", h.ById)
 }
 
 //	@Summary		List Users
