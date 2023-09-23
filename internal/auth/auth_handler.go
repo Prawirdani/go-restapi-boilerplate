@@ -75,4 +75,8 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
+	httputil.RemoveCookie(w, httputil.ACCESS_TOKEN_COOKIE_NAME)
+	httputil.RemoveCookie(w, httputil.REFRESH_TOKEN_COOKIE_NAME)
+
+	httputil.SendJson(w, 200, "logout successfully!")
 }

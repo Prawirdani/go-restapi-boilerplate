@@ -17,6 +17,18 @@ func GetCookieValue(r *http.Request, tokenName string) string {
 	return ""
 }
 
+func RemoveCookie(w http.ResponseWriter, cookieName string) {
+	cookie := &http.Cookie{
+		Name:     cookieName,
+		Value:    "",
+		Path:     "/",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, cookie)
+}
+
 func SetCookies(name string, value string, expires time.Time, w http.ResponseWriter) {
 	cookie := &http.Cookie{
 		Name:     name,
