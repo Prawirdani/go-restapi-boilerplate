@@ -12,8 +12,8 @@ import (
 )
 
 type AuthService interface {
-	Login(ctx context.Context, reqLogin LoginRequest) (*jwt.TokenPairs, error)
-	RefreshToken(ctx context.Context, userId string) (string, error)
+	Login(ctx context.Context, reqLogin LoginRequest) (*jwt.TokenPair, error)
+	RefreshToken(ctx context.Context, userId string) (*jwt.Token, error)
 }
 
 type AuthServiceImpl struct {
@@ -26,35 +26,41 @@ func NewAuthService(ur user.UserRepository) AuthService {
 }
 
 // Login implements UserService.
-func (as *AuthServiceImpl) Login(ctx context.Context, reqLogin LoginRequest) (*jwt.TokenPairs, error) {
+func (as *AuthServiceImpl) Login(ctx context.Context, reqLogin LoginRequest) (*jwt.TokenPair, error) {
 	if err := utils.ValidateRequest(reqLogin); err != nil {
 		slog.Error("User.service.req_validator", "cause", err)
 		return nil, err
 	}
-	
+
 	ctxWT, cancel := context.WithTimeout(ctx, as.ctxTimeout)
 	defer cancel()
 
 	user, err := as.userRepository.GetUserWithPassword(ctxWT, reqLogin.Email)
-	
+
 	if user == nil || !reqLogin.IsPasswordMatch(user.Password) || err != nil {
 		return nil, httputil.ErrUnauthorized("check your credentials")
 	}
 
-	tokenPairs := jwt.SignPairs(user)
+	tokenPair := new(jwt.TokenPair)
+	if err := tokenPair.SignPair(*user); err != nil {
+		return nil, err
+	}
 
-	return tokenPairs, nil
+	return tokenPair, nil
 }
 
-func (as *AuthServiceImpl) RefreshToken(ctx context.Context, userId string) (string, error) {
+func (as *AuthServiceImpl) RefreshToken(ctx context.Context, userId string) (*jwt.Token, error) {
 	ctxWT, cancel := context.WithTimeout(ctx, as.ctxTimeout)
 	defer cancel()
 
 	user, err := as.userRepository.GetUserById(ctxWT, userId)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	newAccessToken := jwt.SignAccessToken(user)
+	newAccessToken := new(jwt.Token)
+	if err := newAccessToken.SignAsAccessToken(*user); err != nil {
+		return nil, err
+	}
 
 	return newAccessToken, nil
 }

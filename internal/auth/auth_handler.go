@@ -42,23 +42,27 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenPairs, err := h.authService.Login(r.Context(), reqBody)
+	tokenPair, err := h.authService.Login(r.Context(), reqBody)
 	if err != nil {
 		httputil.SendError(w, err)
 		return
 	}
 
-	tokenPairs.SetToCookies(w)
-	httputil.SendJson(w, 200, tokenPairs)
+	tokenPair.SetToCookies(w)
+	httputil.SendJson(w, 200, map[string]string{
+		"refresh_token": tokenPair.RefreshToken.Value,
+		"access_token":  tokenPair.AccessToken.Value,
+	},
+	)
 }
 
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
-	accessTokenPayload := r.Context().Value(middleware.AccessTokenContextKey)
+	accessTokenPayload := r.Context().Value(middleware.AC_TOKEN_PAYLOAD_CTX_KEY)
 	httputil.SendJson(w, 200, accessTokenPayload)
 }
 
 func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
-	refreshTokenClaims, err := jwt.ValidateFromRequest(r, httputil.REFRESH_TOKEN_COOKIE_NAME)
+	refreshTokenClaims, err := jwt.ValidateFromRequest(r, httputil.RFT_COOKIE_NAME)
 	if err != nil {
 		httputil.SendError(w, err)
 		return
@@ -69,14 +73,13 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		httputil.SendError(w, err)
 		return
 	}
-
-	httputil.SetCookieAccessToken(newAccessToken, w)
-	httputil.SendJson(w, 200, map[string]string{"access_token": newAccessToken})
+	newAccessToken.SetToCookie(w)
+	httputil.SendJson(w, 200, map[string]string{"access_token": newAccessToken.Value})
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	httputil.RemoveCookie(w, httputil.ACCESS_TOKEN_COOKIE_NAME)
-	httputil.RemoveCookie(w, httputil.REFRESH_TOKEN_COOKIE_NAME)
+	httputil.RemoveCookie(w, httputil.ACT_COOKIE_NAME)
+	httputil.RemoveCookie(w, httputil.RFT_COOKIE_NAME)
 
 	httputil.SendJson(w, 200, "logout successfully!")
 }
