@@ -10,7 +10,7 @@ import (
 
 func LoadEnv() error {
 	// Load .env file
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		slog.Error(".env file doesn't exist")
 		slog.Info("reading env variables from os")
 
