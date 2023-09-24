@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/prawirdani/go-restapi-boilerplate/app"
 	"github.com/prawirdani/go-restapi-boilerplate/config"
-	"github.com/prawirdani/go-restapi-boilerplate/db"
+	"github.com/prawirdani/go-restapi-boilerplate/pkg/db"
 	_ "github.com/prawirdani/go-restapi-boilerplate/docs"
 	"github.com/prawirdani/go-restapi-boilerplate/internal/auth"
 	"github.com/prawirdani/go-restapi-boilerplate/internal/user"
