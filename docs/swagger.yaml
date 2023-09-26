@@ -66,13 +66,127 @@ paths:
       responses:
         "200":
           description: OK
+          headers:
+            accessToken:
+              description: Access token automatically set up to user cookie header
+              type: string
+            refreshToken:
+              description: Refresh token automatically set up to user cookie header
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/httputil.Response'
+            - properties:
+                data:
+                  properties:
+                    access_token:
+                      type: string
+                    refresh_token:
+                      type: string
+                  type: object
+              type: object
+        default:
+          description: 400 & 500 status, error field can be string or object
+          schema:
+            $ref: '#/definitions/httputil.ErrorResponse'
+      summary: Login
+      tags:
+      - Auth
+  /auth/logout:
+    delete:
+      description: Logout current user
+      parameters:
+      - description: accessToken cookie header
+        in: header
+        name: accessToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/httputil.Response'
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
             $ref: '#/definitions/httputil.ErrorResponse'
-      summary: Login
+      security:
+      - JWT Cookies Auth: []
+      summary: Logout
+      tags:
+      - Auth
+  /auth/me:
+    get:
+      description: Identify user login state
+      parameters:
+      - description: accessToken cookie header
+        in: header
+        name: accessToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/httputil.Response'
+            - properties:
+                data:
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string
+                  type: object
+              type: object
+        default:
+          description: 400 & 500 status, error field can be string or object
+          schema:
+            $ref: '#/definitions/httputil.ErrorResponse'
+      security:
+      - JWT Cookies Auth: []
+      summary: Me
+      tags:
+      - Auth
+  /auth/refresh:
+    get:
+      description: Refresh new access token
+      parameters:
+      - description: refreshToken cookie header
+        in: header
+        name: refreshToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            accessToken:
+              description: New Access token automatically set up to user cookie
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/httputil.Response'
+            - properties:
+                data:
+                  properties:
+                    access_token:
+                      type: string
+                  type: object
+              type: object
+        default:
+          description: 400 & 500 status, error field can be string or object
+          schema:
+            $ref: '#/definitions/httputil.ErrorResponse'
+      security:
+      - JWT Cookies Auth: []
+      summary: Refresh Token
       tags:
       - Auth
   /users:

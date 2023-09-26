@@ -36,7 +36,200 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httputil.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string"
+                                                },
+                                                "refresh_token": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Access token automatically set up to user cookie header"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Refresh token automatically set up to user cookie header"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "400 \u0026 500 status, error field can be string or object",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT Cookies Auth": []
+                    }
+                ],
+                "description": "Logout current user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "accessToken cookie header",
+                        "name": "accessToken",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
                             "$ref": "#/definitions/httputil.Response"
+                        }
+                    },
+                    "default": {
+                        "description": "400 \u0026 500 status, error field can be string or object",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "security": [
+                    {
+                        "JWT Cookies Auth": []
+                    }
+                ],
+                "description": "Identify user login state",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Me",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "accessToken cookie header",
+                        "name": "accessToken",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httputil.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "default": {
+                        "description": "400 \u0026 500 status, error field can be string or object",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "get": {
+                "security": [
+                    {
+                        "JWT Cookies Auth": []
+                    }
+                ],
+                "description": "Refresh new access token",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh Token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "refreshToken cookie header",
+                        "name": "refreshToken",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/httputil.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "New Access token automatically set up to user cookie"
+                            }
                         }
                     },
                     "default": {
