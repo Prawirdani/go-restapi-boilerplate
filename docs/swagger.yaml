@@ -10,19 +10,19 @@ definitions:
     - email
     - password
     type: object
-  httputil.ErrorResponse:
-    properties:
-      code:
-        type: integer
-      error: {}
-      status:
-        type: string
-    type: object
   httputil.Response:
     properties:
       code:
         type: integer
       data: {}
+      status:
+        type: string
+    type: object
+  httputil.RestError:
+    properties:
+      code:
+        type: integer
+      error: {}
       status:
         type: string
     type: object
@@ -88,7 +88,7 @@ paths:
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
-            $ref: '#/definitions/httputil.ErrorResponse'
+            $ref: '#/definitions/httputil.RestError'
       summary: Login
       tags:
       - Auth
@@ -111,7 +111,7 @@ paths:
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
-            $ref: '#/definitions/httputil.ErrorResponse'
+            $ref: '#/definitions/httputil.RestError'
       security:
       - JWT Cookies Auth: []
       summary: Logout
@@ -146,7 +146,7 @@ paths:
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
-            $ref: '#/definitions/httputil.ErrorResponse'
+            $ref: '#/definitions/httputil.RestError'
       security:
       - JWT Cookies Auth: []
       summary: Me
@@ -183,7 +183,7 @@ paths:
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
-            $ref: '#/definitions/httputil.ErrorResponse'
+            $ref: '#/definitions/httputil.RestError'
       security:
       - JWT Cookies Auth: []
       summary: Refresh Token
@@ -209,7 +209,7 @@ paths:
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
-            $ref: '#/definitions/httputil.ErrorResponse'
+            $ref: '#/definitions/httputil.RestError'
       summary: List Users
       tags:
       - Users
@@ -234,7 +234,7 @@ paths:
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
-            $ref: '#/definitions/httputil.ErrorResponse'
+            $ref: '#/definitions/httputil.RestError'
       summary: Create User
       tags:
       - Users
@@ -262,7 +262,7 @@ paths:
         default:
           description: 400 & 500 status, error field can be string or object
           schema:
-            $ref: '#/definitions/httputil.ErrorResponse'
+            $ref: '#/definitions/httputil.RestError'
       summary: User by id
       tags:
       - Users

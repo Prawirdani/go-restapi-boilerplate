@@ -28,7 +28,7 @@ func (h *UserHandler) Routes(r chi.Router) {
 //	@Produce		json
 //	@Tags			Users
 //	@Success		200		{object}	httputil.Response{data=[]user.User}
-//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
+//	@Failure		default	{object}	httputil.RestError	"400 & 500 status, error field can be string or object"
 //	@Router			/users [get]
 func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 	users, err := h.userService.FindAll(r.Context())
@@ -46,7 +46,7 @@ func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 //	@Param			userId	path	string	true	"user_id (ULID)"
 //	@Tags			Users
 //	@Success		200		{object}	httputil.Response{data=user.User}
-//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
+//	@Failure		default	{object}	httputil.RestError	"400 & 500 status, error field can be string or object"
 //	@Router			/users/{userId} [get]
 func (h *UserHandler) ById(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "userId")
@@ -66,7 +66,7 @@ func (h *UserHandler) ById(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Tags			Users
 //	@Success		201		{object}	httputil.Response
-//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
+//	@Failure		default	{object}	httputil.RestError	"400 & 500 status, error field can be string or object"
 //	@Router			/users [post]
 func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var reqBody User

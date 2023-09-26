@@ -10,30 +10,31 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-type AppError struct {
-	Code  int
-	Cause interface{}
+type RestError struct {
+	Code   int         `json:"code"`
+	Status string      `json:"status"`
+	Cause  interface{} `json:"error"`
 }
 
-func (e *AppError) Error() string {
+func (e *RestError) Error() string {
 	return fmt.Sprint(e.Cause)
 }
 
-func buildError(statusCode int) func(interface{}) *AppError {
-	return func(cause interface{}) *AppError {
-		return &AppError{Code: statusCode, Cause: cause}
+func buildRestError(statusCode int) func(interface{}) *RestError {
+	return func(cause interface{}) *RestError {
+		return &RestError{Code: statusCode, Status: http.StatusText(statusCode), Cause: cause}
 	}
 }
 
 var (
-	ErrNotFound         = buildError(http.StatusNotFound)
-	ErrBadRequest       = buildError(http.StatusBadRequest)
-	ErrUnauthorized     = buildError(http.StatusUnauthorized)
-	ErrInternalServer   = buildError(http.StatusInternalServerError)
-	ErrMethodNotAllowed = buildError(http.StatusMethodNotAllowed)
+	ErrNotFound         = buildRestError(http.StatusNotFound)
+	ErrBadRequest       = buildRestError(http.StatusBadRequest)
+	ErrUnauthorized     = buildRestError(http.StatusUnauthorized)
+	ErrInternalServer   = buildRestError(http.StatusInternalServerError)
+	ErrMethodNotAllowed = buildRestError(http.StatusMethodNotAllowed)
 )
 
-func parseErrors(err error) *AppError {
+func parseErrors(err error) *RestError {
 	// By Error String
 	switch {
 	case strings.Contains(err.Error(), "EOF"):
@@ -47,9 +48,9 @@ func parseErrors(err error) *AppError {
 	case *json.UnmarshalTypeError:
 		return parseJsonError(e)
 	case *pgconn.PgError:
-		return parsePostgreError(e)
+		return parsePostgresError(e)
 	default:
-		if httpError, ok := err.(*AppError); ok {
+		if httpError, ok := err.(*RestError); ok {
 			return httpError
 		}
 		return ErrInternalServer(err.Error())
@@ -57,7 +58,7 @@ func parseErrors(err error) *AppError {
 }
 
 // For go-playground/validator/v10 package
-func parseValidationError(err validator.ValidationErrors) *AppError {
+func parseValidationError(err validator.ValidationErrors) *RestError {
 	errors := make(map[string]interface{})
 	for _, errField := range err {
 		field := strings.ToLower(errField.Field())
@@ -77,14 +78,14 @@ func parseValidationError(err validator.ValidationErrors) *AppError {
 	return ErrBadRequest(errors)
 }
 
-func parseJsonError(err *json.UnmarshalTypeError) *AppError {
+func parseJsonError(err *json.UnmarshalTypeError) *RestError {
 	if strings.Contains(err.Error(), "unmarshal") {
 		return ErrBadRequest(fmt.Sprintf("Type mismatch at %s, Expected type %s, Got %s", err.Field, err.Type, err.Value))
 	}
 	return ErrBadRequest(err.Error())
 }
 
-func parsePostgreError(err *pgconn.PgError) *AppError {
+func parsePostgresError(err *pgconn.PgError) *RestError {
 	if err.Code == "23505" { // Duplicate Key Error Code
 		switch {
 		case err.ConstraintName == "users_username_key":

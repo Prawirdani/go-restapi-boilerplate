@@ -79,7 +79,7 @@ const docTemplate = `{
                     "default": {
                         "description": "400 \u0026 500 status, error field can be string or object",
                         "schema": {
-                            "$ref": "#/definitions/httputil.ErrorResponse"
+                            "$ref": "#/definitions/httputil.RestError"
                         }
                     }
                 }
@@ -119,7 +119,7 @@ const docTemplate = `{
                     "default": {
                         "description": "400 \u0026 500 status, error field can be string or object",
                         "schema": {
-                            "$ref": "#/definitions/httputil.ErrorResponse"
+                            "$ref": "#/definitions/httputil.RestError"
                         }
                     }
                 }
@@ -179,7 +179,7 @@ const docTemplate = `{
                     "default": {
                         "description": "400 \u0026 500 status, error field can be string or object",
                         "schema": {
-                            "$ref": "#/definitions/httputil.ErrorResponse"
+                            "$ref": "#/definitions/httputil.RestError"
                         }
                     }
                 }
@@ -242,7 +242,7 @@ const docTemplate = `{
                     "default": {
                         "description": "400 \u0026 500 status, error field can be string or object",
                         "schema": {
-                            "$ref": "#/definitions/httputil.ErrorResponse"
+                            "$ref": "#/definitions/httputil.RestError"
                         }
                     }
                 }
@@ -283,7 +283,7 @@ const docTemplate = `{
                     "default": {
                         "description": "400 \u0026 500 status, error field can be string or object",
                         "schema": {
-                            "$ref": "#/definitions/httputil.ErrorResponse"
+                            "$ref": "#/definitions/httputil.RestError"
                         }
                     }
                 }
@@ -321,7 +321,7 @@ const docTemplate = `{
                     "default": {
                         "description": "400 \u0026 500 status, error field can be string or object",
                         "schema": {
-                            "$ref": "#/definitions/httputil.ErrorResponse"
+                            "$ref": "#/definitions/httputil.RestError"
                         }
                     }
                 }
@@ -368,7 +368,7 @@ const docTemplate = `{
                     "default": {
                         "description": "400 \u0026 500 status, error field can be string or object",
                         "schema": {
-                            "$ref": "#/definitions/httputil.ErrorResponse"
+                            "$ref": "#/definitions/httputil.RestError"
                         }
                     }
                 }
@@ -391,18 +391,6 @@ const docTemplate = `{
                 }
             }
         },
-        "httputil.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "error": {},
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "httputil.Response": {
             "type": "object",
             "properties": {
@@ -410,6 +398,18 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "data": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "httputil.RestError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {},
                 "status": {
                     "type": "string"
                 }

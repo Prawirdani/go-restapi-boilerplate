@@ -35,9 +35,9 @@ func (h *AuthHandler) Routes(r chi.Router) {
 //	@Produce		json
 //	@Tags			Auth
 //	@Success		200		{object}	httputil.Response{data=object{access_token=string,refresh_token=string}}
-//	@Failure		default	{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
-//	@Header			200		{string}	refreshToken			"Refresh token automatically set up to user cookie header"
-//	@Header			200		{string}	accessToken				"Access token automatically set up to user cookie header"
+//	@Failure		default	{object}	httputil.RestError	"400 & 500 status, error field can be string or object"
+//	@Header			200		{string}	refreshToken		"Refresh token automatically set up to user cookie header"
+//	@Header			200		{string}	accessToken			"Access token automatically set up to user cookie header"
 //	@Router			/auth/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var reqBody LoginRequest
@@ -65,8 +65,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Tags			Auth
 //	@Success		200			{object}	httputil.Response{data=object{id=string,username=string}}
-//	@Failure		default		{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
-//	@Param			accessToken	header		string					true	"accessToken cookie header"
+//	@Failure		default		{object}	httputil.RestError	"400 & 500 status, error field can be string or object"
+//	@Param			accessToken	header		string				true	"accessToken cookie header"
 //	@Security		JWT Cookies Auth
 //	@Router			/auth/me [get]
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
@@ -79,9 +79,9 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Tags			Auth
 //	@Success		200				{object}	httputil.Response{data=object{access_token=string}}
-//	@Failure		default			{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
-//	@Header			200				{string}	accessToken				"New Access token automatically set up to user cookie"
-//	@Param			refreshToken	header		string					true	"refreshToken cookie header"
+//	@Failure		default			{object}	httputil.RestError	"400 & 500 status, error field can be string or object"
+//	@Header			200				{string}	accessToken			"New Access token automatically set up to user cookie"
+//	@Param			refreshToken	header		string				true	"refreshToken cookie header"
 //	@Security		JWT Cookies Auth
 //	@Router			/auth/refresh [get]
 func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
@@ -105,8 +105,8 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Tags			Auth
 //	@Success		200			{object}	httputil.Response
-//	@Failure		default		{object}	httputil.ErrorResponse	"400 & 500 status, error field can be string or object"
-//	@Param			accessToken	header		string					true	"accessToken cookie header"
+//	@Failure		default		{object}	httputil.RestError	"400 & 500 status, error field can be string or object"
+//	@Param			accessToken	header		string				true	"accessToken cookie header"
 //	@Security		JWT Cookies Auth
 //	@Router			/auth/logout [delete]
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
