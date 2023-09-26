@@ -90,7 +90,14 @@ func parseJsonError(err *json.UnmarshalTypeError) *Error {
 
 func parsePostgreError(err *pgconn.PgError) *Error {
 	if err.Code == "23505" { // Duplicate Key Error Code
-		return ErrBadRequest(err.Detail)
+		switch {
+		case err.ConstraintName == "users_username_key":
+			return ErrBadRequest("username already exist")
+		case err.ConstraintName == "users_email_key":
+			return ErrBadRequest("email already exist")
+		default:
+			return ErrBadRequest(err.Detail)
+		}
 	}
 	return ErrInternalServer(err)
 }
