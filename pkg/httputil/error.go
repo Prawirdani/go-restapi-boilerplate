@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/go-sql-driver/mysql"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -15,18 +14,18 @@ type errCause interface {
 	string | interface{}
 }
 
-type apiError struct {
+type Error struct {
 	Code    int
 	Message errCause
 }
 
-func (e *apiError) Error() string {
+func (e *Error) Error() string {
 	return fmt.Sprint(e.Message)
 }
 
-func buildError(code int) func(errCause) *apiError {
-	return func(msg errCause) *apiError {
-		return &apiError{Code: code, Message: msg}
+func buildError(code int) func(errCause) *Error {
+	return func(msg errCause) *Error {
+		return &Error{Code: code, Message: msg}
 	}
 }
 
@@ -38,7 +37,7 @@ var (
 	ErrMethodNotAllowed = buildError(http.StatusMethodNotAllowed)
 )
 
-func parseErrors(err error) *apiError {
+func parseErrors(err error) *Error {
 	// By Error String
 	switch {
 	case strings.Contains(err.Error(), "EOF"):
@@ -51,12 +50,10 @@ func parseErrors(err error) *apiError {
 		return parseValidationError(e)
 	case *json.UnmarshalTypeError:
 		return parseJsonError(e)
-	case *mysql.MySQLError:
-		return parseMysqlError(e)
 	case *pgconn.PgError:
 		return parsePostgreError(e)
 	default:
-		if httpError, ok := err.(*apiError); ok {
+		if httpError, ok := err.(*Error); ok {
 			return httpError
 		}
 		return ErrInternalServer(err.Error())
@@ -64,7 +61,7 @@ func parseErrors(err error) *apiError {
 }
 
 // For go-playground/validator/v10 package
-func parseValidationError(err validator.ValidationErrors) *apiError {
+func parseValidationError(err validator.ValidationErrors) *Error {
 	errors := make(map[string]interface{})
 	for _, errField := range err {
 		field := strings.ToLower(errField.Field())
@@ -84,22 +81,14 @@ func parseValidationError(err validator.ValidationErrors) *apiError {
 	return ErrBadRequest(errors)
 }
 
-func parseJsonError(err *json.UnmarshalTypeError) *apiError {
+func parseJsonError(err *json.UnmarshalTypeError) *Error {
 	if strings.Contains(err.Error(), "unmarshal") {
 		return ErrBadRequest(fmt.Sprintf("Type mismatch at %s, Expected type %s, Got %s", err.Field, err.Type, err.Value))
 	}
 	return ErrBadRequest(err.Error())
 }
 
-func parseMysqlError(err *mysql.MySQLError) *apiError {
-	if err.Number == 1062 {
-		// Define your models duplicate entry key here
-		return ErrBadRequest("{Key} already exists")
-	}
-	return ErrInternalServer(err)
-}
-
-func parsePostgreError(err *pgconn.PgError) *apiError {
+func parsePostgreError(err *pgconn.PgError) *Error {
 	if err.Code == "23505" { // Duplicate Key Error Code
 		return ErrBadRequest(err.Detail)
 	}
