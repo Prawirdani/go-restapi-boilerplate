@@ -1,7 +1,6 @@
 package httputil
 
 import (
-	"log/slog"
 	"net/http"
 )
 
@@ -23,7 +22,6 @@ func NewResponse(code int, data interface{}) Response {
 
 func NewErrorResponse(err error) ErrorResponse {
 	parsedError := parseErrors(err)
-	slog.Error("API_ERROR", "cause", parsedError.Message)
 	return ErrorResponse{
 		Code:   parsedError.Code,
 		Error:  parsedError.Message,
