@@ -14,12 +14,13 @@ func InitLogger() {
 }
 
 type RequestLogAttributes struct {
-	Method      string
-	Uri         string
-	ForwardedIP string
-	StatusCode  int
-	StatusText  string
-	TimeTaken   time.Duration
+	Method     string
+	Uri        string
+	ClientIP   string
+	RequestID  string
+	StatusCode int
+	StatusText string
+	TimeTaken  time.Duration
 }
 
 type ResRecorder struct {
@@ -38,10 +39,10 @@ func HttpRequestLogger(rl RequestLogAttributes) {
 		"HTTP Request Log",
 		slog.String("method", rl.Method),
 		slog.String("url", rl.Uri),
-		slog.String("from", rl.ForwardedIP),
+		slog.String("from", rl.ClientIP),
+		slog.String("request-id", rl.RequestID),
 		slog.Int("status_code", rl.StatusCode),
 		slog.String("status_text", rl.StatusText),
 		slog.Float64("time_taken(ms)", float64(rl.TimeTaken.Microseconds())/float64(1000)),
 	)
 }
-
