@@ -11,14 +11,16 @@ import (
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
 	httpSwagger "github.com/swaggo/http-swagger"
 
-	"github.com/unrolled/secure"
 	middleware "github.com/prawirdani/go-restapi-boilerplate/internal/middleware"
+	"github.com/unrolled/secure"
 )
 
 func NewMainRouter() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(panicRecoverer)
+	r.Use(chiMiddleware.RealIP)
+	r.Use(chiMiddleware.RequestID)
 	r.Use(middleware.RequestLogger)
 
 	r.Use(cors)
@@ -67,7 +69,7 @@ func cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Request-Id, Content-Type, Accept, Authorization")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		next.ServeHTTP(w, r)
