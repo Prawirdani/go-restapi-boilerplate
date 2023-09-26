@@ -24,7 +24,7 @@ func NewErrorResponse(err error) ErrorResponse {
 	parsedError := parseErrors(err)
 	return ErrorResponse{
 		Code:   parsedError.Code,
-		Error:  parsedError.Message,
+		Error:  parsedError.Cause,
 		Status: http.StatusText(parsedError.Code),
 	}
 }
