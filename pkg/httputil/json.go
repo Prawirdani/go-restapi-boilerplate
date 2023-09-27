@@ -1,39 +1,50 @@
 package httputil
 
 import (
+	"bytes"
 	"encoding/json"
-	"log/slog"
 	"net/http"
 )
 
 func SendJson(w http.ResponseWriter, status_code int, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status_code)
+	buf := &bytes.Buffer{}
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(true)
 
 	response := NewResponse(status_code, data)
-
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		slog.Error("httputil.SendJson", "cause", err)
+	
+	if err := enc.Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status_code)
+	w.Write(buf.Bytes())
 }
 
 func BindJson(r *http.Request, request interface{}) error {
 	defer r.Body.Close()
-	err := json.NewDecoder(r.Body).Decode(request)
-	if err != nil {
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(request); err != nil {
 		return err
 	}
 	return nil
 }
 
 func SendError(w http.ResponseWriter, Err error) {
-	w.Header().Set("Content-Type", "application/json")
-	response := NewErrorResponse(Err)
-	w.WriteHeader(response.Code)
+	buf := &bytes.Buffer{}
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(true)
 
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		slog.Error("httputil.SendErr", "cause", err)
+	response := NewErrorResponse(Err)
+
+	if err := enc.Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.Code)
+	w.Write(buf.Bytes())
 }
