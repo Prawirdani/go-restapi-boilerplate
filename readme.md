@@ -4,7 +4,7 @@ additional:
 - Postgres driver: [pgx](https://github.com/jackc/pgx)
 - Middleware:
     - [Secure](https://github.com/unrolled/secure)
-    - [Cors](https://github.com/rs/cors)
+    - [Cors](https://github.com/go-chi/cors)
 - Authentication:
     - [JWT](https://github.com/golang-jwt/jwt)
 - Utility:
@@ -14,4 +14,4 @@ additional:
 - Docs:
     - [Swagger](https://github.com/swaggo/http-swagger)
 
-Used most of the time for Layered Architecture, probably suitable too for DDD. I'm not going to write any documentation, so if you want to use this, go play around and find out! 
+Used most of the time for Layered Architecture, probably suitable too for DDD. I'm not going to write any documentation, so if you want to use this, go play around and find out, it's pretty straightforward. 
