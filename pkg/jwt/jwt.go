@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -11,9 +12,11 @@ import (
 	"github.com/prawirdani/go-restapi-boilerplate/pkg/httputil"
 )
 
-var jwtSecret = []byte("akBfd4k+enMwQ61edGpfsu3uLvxXa9aIlM0MIGm6BobvIGA/r3xUY0CqCyGpl65cp8ytxr1gg8Ssp9SEmDOEGQ==")
+var jwtSecret = []byte(
+	"akBfd4k+enMwQ61edGpfsu3uLvxXa9aIlM0MIGm6BobvIGA/r3xUY0CqCyGpl65cp8ytxr1gg8Ssp9SEmDOEGQ==",
+)
 
-type TokenType int
+type TokenType int8
 
 const (
 	// Type for refresh token
@@ -108,10 +111,10 @@ func generateToken(u user.User, tokenType TokenType) (string, error) {
 			IssuedAt: jwt.NewNumericDate(timeNow),
 		},
 	}
-	switch {
-	case tokenType == REFRESH_TOKEN:
+	switch tokenType {
+	case REFRESH_TOKEN:
 		claims.ExpiresAt = jwt.NewNumericDate(timeNow.Add(60 * time.Minute))
-	case tokenType == ACCESS_TOKEN:
+	case ACCESS_TOKEN:
 		claims.Username = u.Username
 		claims.ExpiresAt = jwt.NewNumericDate(timeNow.Add(30 * time.Second))
 	}
@@ -127,13 +130,22 @@ func generateToken(u user.User, tokenType TokenType) (string, error) {
 
 // Validate token and return map claims
 func ValidateFromRequest(r *http.Request, tokenCookieName string) (map[string]interface{}, error) {
-	tokenString := httputil.GetCookieValue(r, tokenCookieName)
+	tokenString := ""
+
+	authHeader := r.Header.Get("Authorization")
+	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
+		tokenString = authHeader[len("Bearer "):]
+	} else {
+		tokenString = httputil.GetCookieValue(r, tokenCookieName)
+	}
 
 	claims := jwt.MapClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, httputil.ErrInternalServer(fmt.Errorf("unexpected signing method: %v", t.Header["alg"]))
+			return nil, httputil.ErrInternalServer(
+				fmt.Errorf("unexpected signing method: %v", t.Header["alg"]),
+			)
 		}
 		return jwtSecret, nil
 	})
