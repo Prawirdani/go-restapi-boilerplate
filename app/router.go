@@ -25,16 +25,26 @@ func NewMainRouter() *chi.Mux {
 	r.Use(middleware.RequestLogger)
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173", "http://localhost:4173", "http://localhost:3000"},
-		AllowedMethods:   []string{"GET", "POST", "DELETE", "PUT", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-Request-Id"},
+		AllowedOrigins: []string{
+			"http://localhost:5173",
+			"http://localhost:4173",
+			"http://localhost:3000",
+		},
+		AllowedMethods: []string{"GET", "POST", "DELETE", "PUT", "OPTIONS"},
+		AllowedHeaders: []string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+			"X-CSRF-Token",
+			"X-Request-Id",
+		},
 		AllowCredentials: true,
 		MaxAge:           300,
 	}))
 
 	r.Use(secure.New(secure.Options{
 		ContentTypeNosniff: true,
-		FrameDeny: true,
+		FrameDeny:          true,
 	}).Handler)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +59,12 @@ func NewMainRouter() *chi.Mux {
 
 	// Enable Swagger on development environment
 	if os.Getenv("ENV") == "development" {
-		slog.Info(fmt.Sprintf("Swagger available at http://localhost:%s/swagger/index.html", os.Getenv("APP_PORT")))
+		slog.Info(
+			fmt.Sprintf(
+				"Swagger available at http://localhost:%s/swagger/index.html",
+				os.Getenv("APP_PORT"),
+			),
+		)
 		r.Get("/swagger/*", httpSwagger.WrapHandler)
 	}
 
@@ -72,4 +87,3 @@ func panicRecoverer(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
-
